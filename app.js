@@ -9,7 +9,7 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer, gamePlaying,limit;
+var scores, roundScore, activePlayer, gamePlaying,limit ,previous;
 
 init();
 
@@ -18,41 +18,45 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     if(gamePlaying) {
         // 1. Random number
         var dice = Math.floor(Math.random() * 6) + 1;
-
+        
         //2. Display the result
         var diceDOM = document.querySelector('.dice');
         diceDOM.style.display = 'block';
         diceDOM.src = 'dice-' + dice + '.png';
 
-
+        
         //3. Update the round score IF the rolled number was NOT a 1
-        if (dice !== 1) {
+        if (dice !== 1 && dice != previous) {
             //Add score
             roundScore += dice;
             document.querySelector('#current-' + activePlayer).textContent = roundScore;
+            previous = dice
         } else {
             //Next player
+            previous = dice
             nextPlayer();
         }
+        
     }    
 });
 
 document.querySelector('.choose-end').addEventListener('change', function() {
     if(gamePlaying){
 
-        let new_limit = document.querySelector('.choose-end').value
+        let temp = document.querySelector('.choose-end').value
         try{
-            parseInt(new_limit,10)
+            new_limit = parseInt(temp,10)
+            if (!Number.isInteger(new_limit)){
+                alert('not a number')
+                return
+            }
         }
         catch (error){
             alert('not a number')
             return
         }
         
-        if (typeof(new_limit)!= Number){
-            alert(' not a number')
-            return
-        }
+     
         limit = new_limit
     }
 });
@@ -103,6 +107,7 @@ function init() {
     scores = [0, 0];
     activePlayer = 0;
     roundScore = 0;
+    previous = 0;
     limit = 100; // deafult
     gamePlaying = true;
     
@@ -130,13 +135,3 @@ function init() {
 
 
 
-
-
-/*
-YOUR 3 CHALLENGES
-Change the game to follow these rules:
-
-1. A player looses his ENTIRE score when he rolls two 6 in a row. After that, it's the next player's turn. (Hint: Always save the previous dice roll in a separate variable)
-2. Add an input field to the HTML where players can set the winning score, so that they can change the predefined score of 100. (Hint: you can read that value with the .value property in JavaScript. This is a good oportunity to use google to figure this out :)
-3. Add another dice to the game, so that there are two dices now. The player looses his current score when one of them is a 1. (Hint: you will need CSS to position the second dice, so take a look at the CSS code for the first one.)
-*/
